@@ -59,6 +59,8 @@ def index():
     # get patients using op_id
     op_id = session['operator'].op_id
     patients_table = pd.read_sql("SELECT * from current_patients where op_id=="+op_id+";", db.session.bind)
+    if patients_table.shape[0] == 0:
+      return render_template('operator_login.html', wrong=False)
     to_contact_patients = []
     contacted_patients = []
     for i in range(0,patients_table.shape[0]):
@@ -77,9 +79,15 @@ def index():
         contacted_patients.append(patient)
     to_contact = len(to_contact_patients)
     contacted = len(contacted_patients)
-    return render_template('index.html',to_contact_patients=to_contact_patients,\
-     to_contact=to_contact,contacted=contacted, name=session['operator'].name,\
-     contacted_patients = contacted_patients)
+    print('contacted',contacted)
+    print('to_contact',to_contact)
+    return render_template('index.html',
+    to_contact_patients=to_contact_patients,
+     to_contact=to_contact,
+     contacted=contacted,
+     name=session['operator'].name,
+     contacted_patients = contacted_patients
+     )
   else:
     return render_template('operator_login.html', wrong=False)
 
