@@ -4,7 +4,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import random , string
-# import pandas as pd
+import pandas as pd
 import configparser
 
 path = os.path.dirname(os.path.realpath(__file__))
@@ -28,7 +28,11 @@ class CurrentPatients(db.Model):
   pid = db.Column(db.String, primary_key=True)
   name = db.Column(db.String)
   mobile = db.Column(db.String)
+  age = db.Column(db.String)
+  sex =  db.Column(db.String)
+  address = db.Column(db.String)
   op_id = db.Column(db.String)
+  contacted = db.Column(db.String)
 
 class OperatorLog(db.Model):
   tran_id = db.Column(db.String, primary_key=True)
@@ -52,12 +56,46 @@ class PatientLog(db.Model):
 def index():
   # if operator is logged in
   if "operator" in session:
-    
-    return render_template('index.html')
+    # get patients using op_id
+    op_id = session['operator'].op_id
+    patients_table = pd.read_sql("SELECT * from current_patients where op_id=="+op_id+";", db.session.bind)
+    to_contact_patients = []
+    contacted_patients = []
+    for i in range(0,patients_table.shape[0]):
+      patient = {
+        'pid':patients_table.iloc[i,0],
+        'name':patients_table.iloc[i,1],
+        'mobile':patients_table.iloc[i,2],
+        'age':patients_table.iloc[i,3],
+        'sex':patients_table.iloc[i,4],
+        'address':patients_table.iloc[i,5],
+        'contacted':patients_table.iloc[i,7],
+      }
+      if patients_table.iloc[i,7] == "no":
+        to_contact_patients.append(patient)
+      else:
+        contacted_patients.append(patient)
+    to_contact = len(to_contact_patients)
+    contacted = len(contacted_patients)
+    return render_template('index.html',to_contact_patients=to_contact_patients,\
+     to_contact=to_contact,contacted=contacted, name=session['operator'].name,\
+     contacted_patients = contacted_patients)
   else:
     return render_template('operator_login.html', wrong=False)
 
-  
+# mark patients as contacted/unreachable
+@app.route('/contact')
+def contact():
+  if "operator" in session:
+    status = request.args.get('status')
+    pid = request.args.get('pid')
+    patient = CurrentPatients.query.filter_by(pid=pid).first()
+    patient.contacted = status
+    db.session.commit()
+    return redirect('/')
+  else:
+    return render_template('operator_login.html', wrong=False)
+
 # log out and exit session
 @app.route('/logout')
 def logout():
@@ -89,7 +127,6 @@ def operator_verify():
   result = operator.first()
   if result:
     session['operator'] = result
-    print(result.op_id)
     return redirect('/')
   else:
     return render_template('operator_login.html',wrong=True)

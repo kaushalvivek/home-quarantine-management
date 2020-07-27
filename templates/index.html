@@ -1,6 +1,96 @@
 {% include "header.html" %}
-
+<div class="container">
+  <br />
+  <div class="card">
+    <div class="card-body mt-2">
+      <h3>Hi {{ name }}</h3>
+      This is some text within a card body.
+    </div>
+  </div>
+  <div class="text-center">
+    <span>{{ to_contact }} / {{ to_contact+contacted }}</span>
+  </div>
+  <br />
+  <div class="row">
+    <h2>
+      To Contact:
+    </h2>
+    <div class="col-lg-12">
+      <div class="panel-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Mobile</th>
+              <th>Address</th>
+              <th>Change Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in to_contact_patients %}
+            <tr>
+              <td>{{ i.name }}</td>
+              <td>{{ i.age }}</td>
+              <td>{{ i.sex }}</td>
+              <td>{{ i.mobile }}</td>
+              <td>{{ i.address }}</td>
+              <td><button type="button" class="btn btn-success m-2 btn-sm"
+                  onClick="contact({{ i.pid }},'contacted')">Contacted</button>
+                <button type="button" class="btn btn-danger btn-sm"
+                  onClick="contact({{ i.pid }},'unreachable')">Unreachable</button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <h2>
+      Contacted:
+    </h2>
+    <div class="col-lg-12">
+      <div class="panel-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Mobile</th>
+              <th>Address</th>
+              <th>Status</th>
+              <th>Undo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in contacted_patients %}
+            <tr>
+              <td>{{ i.name }}</td>
+              <td>{{ i.age }}</td>
+              <td>{{ i.sex }}</td>
+              <td>{{ i.mobile }}</td>
+              <td>{{ i.address }}</td>
+              <td>{{ i.contacted }}</td>
+              <td><button type="button" onClick="contact({{ i.pid }},'no')" class="btn btn-link">Put Back</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% include "footer.html" %}
 </body>
+<script>
+  function contact(pid, status) {
+    url = "/contact?pid=" + pid + "&status=" + status;
+    window.location = url;
+  }
+</script>
 
 </HTML>

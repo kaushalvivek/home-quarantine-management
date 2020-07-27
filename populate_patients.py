@@ -25,7 +25,11 @@ for i in range(0, active.shape[0]):
     'pid':active.iloc[i,0],
     'name':active.iloc[i,1],
     'mobile':active.iloc[i,5],
-    'op_id':operators[i%len(operators)].op_id
+    'age':active.iloc[i,2],
+    'sex':active.iloc[i,3],
+    'address':active.iloc[i,4],
+    'op_id':operators[i%len(operators)].op_id,
+    'contacted':"no"
   }
   patients.append(patient)
 
@@ -35,7 +39,10 @@ db.session.query(CurrentPatients).delete()
 # push to database
 for i in range(0,len(patients)):
   new_patient = CurrentPatients(name=patients[i]['name'],\
-  pid=patients[i]['pid'],mobile=patients[i]['mobile'],op_id=patients[i]['op_id'])
+  pid=patients[i]['pid'],mobile=patients[i]['mobile'],\
+  op_id=patients[i]['op_id'],age=patients[i]['age'],\
+  sex=patients[i]['sex'],address=patients[i]['address'],\
+  contacted=patients[i]['contacted'])
   db.session.add(new_patient)
 
 db.session.commit()
