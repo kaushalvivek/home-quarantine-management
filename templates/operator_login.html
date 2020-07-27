@@ -1,0 +1,76 @@
+{% include "header.html" %}
+<style>
+  .form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+  }
+
+  .form-signin .checkbox {
+    font-weight: 400;
+  }
+
+  .form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .form-signin .form-control:focus {
+    z-index: 2;
+  }
+
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+</style>
+
+<body class="text-center">
+  <form class="form-signin">
+    <!-- <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"> -->
+    <h1 class="h3 mb-3 font-weight-normal">Operator sign in</h1>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <button class="btn btn-lg btn-primary btn-block">Sign in</button>
+  </form>
+  <div id="message" style="display:none">
+    <p style="color:red;">
+      Incorrect Email or Password
+    </p>
+  </div>
+  <p class="mt-5 mb-3 text-muted">&copy; Vivek Kaushal 2020</p>
+  {% include "footer.html" %}
+</body>
+<script>
+
+  $(document).ready(function () {
+    if ('{{ wrong }}' == 'True') {
+      $('#message').css('display', 'block');
+    }
+  });
+
+  $("form").on('submit', function (e) {
+    e.preventDefault();
+    console.log("Sending")
+    var email = $(' #inputEmail').val();
+    var password = $(' #inputPassword').val();
+    var url = 'operator_verify?email=' + email + "&password=" + password;
+    window.location = url;
+    //ajax code here
+  });
+</script>
+
+</HTML>
