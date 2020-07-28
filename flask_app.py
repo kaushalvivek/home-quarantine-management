@@ -78,13 +78,20 @@ def index():
       else:
         contacted_patients.append(patient)
     to_contact = len(to_contact_patients)
-    contacted = len(contacted_patients)
-    print('contacted',contacted)
-    print('to_contact',to_contact)
+    contact_list = patients_table['contacted'].tolist()
+    contacted = 0
+    unreachable = 0
+    for i in contact_list:
+      if i == "contacted":
+        contacted+=1
+      elif i == "unreachable":
+        unreachable+=1
+    
     return render_template('index.html',
     to_contact_patients=to_contact_patients,
      to_contact=to_contact,
      contacted=contacted,
+     unreachable=unreachable,
      name=session['operator'].name,
      contacted_patients = contacted_patients
      )
