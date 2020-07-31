@@ -20,8 +20,8 @@
             </p>
             <div class="progress">
               <div id="progress" class="progress-bar bg-success" role="progressbar"
-                style="width: {{ (contacted/(contacted+to_contact))*100 }}%" aria-value
-                now="{{ (contacted/(contacted+to_contact))*100 }}" aria-valuemin="0" aria-valuemax="100">
+                style="width: {{ (contacted/(+unreachable+contacted+to_contact))*100 }}%" aria-value
+                now="{{ (contacted/(unreachable+contacted+to_contact))*100 }}" aria-valuemin="0" aria-valuemax="100">
               </div>
             </div>
           </div>
@@ -44,7 +44,8 @@
               <th>Gender</th>
               <th>Mobile</th>
               <th>Address</th>
-              <th>Change Status</th>
+              <th>Fill Information</th>
+              <th>Mark Unreachable</th>
             </tr>
           </thead>
           <tbody>
@@ -55,10 +56,46 @@
               <td>{{ i.sex }}</td>
               <td>{{ i.mobile }}</td>
               <td>{{ i.address }}</td>
-              <td><button type="button" class="btn btn-success m-2 btn-sm"
-                  onClick="contact({{ i.pid }},'contacted')">Contacted</button>
+              <td>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal">
+                  Click to Fill Info
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ i.name }}'s Symptoms Today</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          {% for i in symptoms %}
+                          <div class="form-check m-3">
+                            <input name="{{ i.name }}" type="checkbox" class="form-check-input symptom"
+                              id="{{ i.symptom_id }}">
+                            <label class="form-check-label" for="{{ i.symptom_id }}">{{ i.name }}</label>
+                          </div>
+                          {% endfor %}
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success m-2 btn-sm"
+                          onClick="contact({{ i.pid }})">Submit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
                 <button type="button" class="btn btn-danger btn-sm"
-                  onClick="contact({{ i.pid }},'unreachable')">Unreachable</button></td>
+                  onClick="unreachable({{ i.pid }})">Unreachable</button></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -68,7 +105,7 @@
   </div>
   <div class="row">
     <h3 class="ml-3">
-      Contacted:
+      Unreachable:
     </h3>
     <div class="col-lg-12">
       <div class="panel-body">
@@ -80,21 +117,20 @@
               <th>Gender</th>
               <th>Mobile</th>
               <th>Address</th>
-              <th>Status</th>
-              <th>Undo</th>
+              <th>Retry</th>
             </tr>
           </thead>
           <tbody>
-            {% for i in contacted_patients %}
+            {% for i in unreachable_patients %}
             <tr>
               <td>{{ i.name }}</td>
               <td>{{ i.age }}</td>
               <td>{{ i.sex }}</td>
               <td>{{ i.mobile }}</td>
               <td>{{ i.address }}</td>
-              <td>{{ i.contacted }}</td>
-              <td><button type="button" onClick="contact({{ i.pid }},'no')" class="btn btn-link">Put Back</button>
-              </td>
+              <td><button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal">
+                  Try Again
+                </button></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -107,7 +143,7 @@
 </body>
 <script>
   $('document').ready(function () {
-    $("#progress").text(Math.round({{ (contacted / (contacted + to_contact)) * 100 }}) + "%");
+    $("#progress").text(Math.round({{ (contacted / (unreachable + contacted + to_contact)) * 100 }}) + "%");
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
   let dateObj = new Date();
@@ -117,8 +153,20 @@
   let output = "Your dashboard for " + month + '\n' + day + ', ' + year;
   $("#date").text(output);
   });
-  function contact(pid, status) {
-    url = "/contact?pid=" + pid + "&status=" + status;
+
+  function contact(pid) {
+    var symptoms = [];
+    $('.symptom:checkbox:checked').each(function () {
+      symptoms.push(this.name);
+    })
+    url = "/contact?pid=" + pid
+      + "&symptoms=" + symptoms
+      ;
+    window.location = url;
+  }
+
+  function unreachable(pid, status) {
+    url = "/unreachable?pid=" + pid;
     window.location = url;
   }
 </script>

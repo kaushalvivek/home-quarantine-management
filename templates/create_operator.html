@@ -4,27 +4,35 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12 col-md-12">
-        <h1 class="mt-5">Enter Operator Details:-</h1>
-        <form id='test' name='test'>
-          <div class="form-group">
-            <label for="age">Operator Name : </label>
-            <input type="text" class="form-control" id="name" placeholder="enter operator name ...">
-          </div>
+        <br />
+        <div class="card">
+          <div class="card-body">
+            <div class="text-justify">
+              <h2 class="mt-1">Enter Operator Details</h2>
+              <form id='test' name='test'>
+                <div class="form-group">
+                  <label for="age">Operator Name : </label>
+                  <input type="text" class="form-control" id="name" placeholder="enter operator name ...">
+                </div>
 
-          <div class="form-group">
-            <label for="age">Operator Email : </label>
-            <input type="text" class="form-control" id="email" placeholder="enter operator email ...">
-          </div>
+                <div class="form-group">
+                  <label for="age">Operator Email : </label>
+                  <input type="text" class="form-control" id="email" placeholder="enter operator email ...">
+                </div>
 
-          <div class="form-group">
-            <label for="age">Operator Password : </label>
-            <input type="text" class="form-control" id="password" placeholder="enter a password for the operator ...">
+                <div class="form-group">
+                  <label for="age">Operator Password : </label>
+                  <input type="text" class="form-control" id="password"
+                    placeholder="enter a password for the operator ...">
+                </div>
+                <br />
+                <p id="error" style="color:red; display: none">Enter all data!</p>
+                <button type="button" class="btn btn-dark" onclick="submitData()">Create Operator</button>
+            </div>
           </div>
+        </div>
       </div>
     </div>
-    <br />
-    <p id="error" style="color:red; display: none">Enter all data!</p>
-    <button type="button" class="btn btn-primary" onclick="submitData()">Create Operator</button>
   </div>
 
   {% include "footer.html" %}

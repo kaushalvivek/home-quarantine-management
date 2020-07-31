@@ -5,17 +5,65 @@
   <div class="card">
     <div class="card-body mt-2">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="text-justify">
             <h3>Hi, Admin!</h3>
             <p id="date"></p>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8  ">
           <div class="text-justify">
             <h5 class="ml-2">Your Actions:</h5>
             <button type="button" class="btn btn-success btn-sm m-2" onClick="createOp()">Create Operator</button>
             <button type="button" class="btn btn-info btn-sm m-2" onClick="createOp()">View Operator Analysis</button>
+            <button type="button" class="btn btn-warning btn-sm m-2" onClick="createOp()">View Patient Analysis</button>
+            <button type="button" class="btn btn-dark btn-sm m-2" data-toggle="modal" data-target="#exampleModal">
+              Manage Symptoms
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Patient Symptoms</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="text-center">
+                      <form id='test' name='test'>
+                        <div class="row">
+                          <div class="col-md-8">
+                            <div class="form-group">
+                              <input type="text" class="form-control" id="name" placeholder="enter symptom name ...">
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <button type="button" class="btn btn-success" onclick="submitData()">Add New</button>
+                          </div>
+                        </div>
+                        <p id="error" style="color:red; display: none">Enter symptom name!</p>
+                    </div>
+                    <em>
+                      To delete a symptom, click on the 'x' next to it
+                    </em>
+                    <table>
+                      {% for i in symptoms %}
+                      <tr>
+                        <td class="p-2">{{ i.name }}</td>
+                        <td class="p-2"><span onclick="deleteSymptom({{ i.symptom_id }})">❌</span></td>
+                        {% endfor %}
+                    </table>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -71,9 +119,31 @@
   function createOp() {
     window.location = '/create_operator';
   };
+
+  function manageSymptom() {
+    window.location = '/create_operator';
+  };
+
   function deleteOp(op_id) {
-    console.log(op_id)
     window.location = '/delete_operator?op_id=' + op_id;
+  }
+
+  function deleteSymptom(symptom_id) {
+    window.location = '/delete_symptom?symptom_id=' + symptom_id;
+  }
+
+  // get symptom
+  function submitData() {
+    var name = $('#name').val();
+
+    // var today = new Date();
+    if (!name) {
+      $('#error').css('display', 'block');
+    }
+    else {
+      var url = 'get_symptom?name=' + name;
+      window.location = url
+    }
   }
 </script>
 
