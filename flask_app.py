@@ -62,10 +62,12 @@ class Symptoms(db.Model):
 def index():
   # if operator is logged in
   if "operator" in session:
-    # get patients using op_id
+    # get all symptoms
     symptoms = Symptoms.query.all()
+    # get patients using op_id
     op_id = session['operator'].op_id
     patients_table = pd.read_sql("SELECT * from current_patients where op_id=="+op_id+";", db.session.bind)
+    # if patient_table is empty -- logout
     if patients_table.shape[0] == 0:
       return render_template('operator_login.html', wrong=False)
     to_contact_patients = []

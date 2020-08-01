@@ -20,7 +20,7 @@
             </p>
             <div class="progress">
               <div id="progress" class="progress-bar bg-success" role="progressbar"
-                style="width: {{ (contacted/(+unreachable+contacted+to_contact))*100 }}%" aria-value
+                style="width: {{ (contacted/(unreachable+contacted+to_contact))*100 }}%" aria-value
                 now="{{ (contacted/(unreachable+contacted+to_contact))*100 }}" aria-valuemin="0" aria-valuemax="100">
               </div>
             </div>
@@ -128,9 +128,40 @@
               <td>{{ i.sex }}</td>
               <td>{{ i.mobile }}</td>
               <td>{{ i.address }}</td>
-              <td><button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal">
+              <td><button type="button" class="btn btn-warning btn-sm" data-toggle="modal"
+                  data-target="#unreachableModal">
                   Try Again
-                </button></td>
+                </button>
+                <div class="modal fade" id="unreachableModal" tabindex="-1" role="dialog"
+                  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ i.name }}'s Symptoms Today</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          {% for i in symptoms %}
+                          <div class="form-check m-3">
+                            <input name="{{ i.name }}" type="checkbox" class="form-check-input symptom"
+                              id="{{ i.symptom_id }}">
+                            <label class="form-check-label" for="{{ i.symptom_id }}">{{ i.name }}</label>
+                          </div>
+                          {% endfor %}
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success m-2 btn-sm"
+                          onClick="contact({{ i.pid }})">Submit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
