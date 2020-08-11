@@ -34,7 +34,7 @@ class CurrentPatients(db.Model):
   op_id = db.Column(db.String)
   contacted = db.Column(db.String)
 
-class OperatorLog(db.Model):
+class AllTimePatients(db.Model):
   tran_id = db.Column(db.String, primary_key=True)
   date = db.Column(db.DateTime)
   op_id = db.Column(db.String)
@@ -47,6 +47,7 @@ class PatientLog(db.Model):
   date = db.Column(db.DateTime)
   pid = db.Column(db.String)
   symptoms = db.Column(db.String)
+  op_id = db.Column(db.String)
 
 class Symptoms(db.Model):
   symptom_id = db.Column(db.String, primary_key=True)
@@ -61,7 +62,9 @@ class Symptoms(db.Model):
 @app.route('/')
 def index():
   # if operator is logged in
+  # print(session['operator'])
   if "operator" in session:
+    print("logged in")
     # get all symptoms
     symptoms = Symptoms.query.all()
     # get patients using op_id
@@ -69,7 +72,7 @@ def index():
     patients_table = pd.read_sql("SELECT * from current_patients where op_id=="+op_id+";", db.session.bind)
     # if patient_table is empty -- logout
     if patients_table.shape[0] == 0:
-      return render_template('operator_login.html', wrong=False)
+      return render_template("no_patients.html",name=session['operator'].name)
     to_contact_patients = []
     contacted_patients = []
     unreachable_patients = []
@@ -112,9 +115,9 @@ def contact():
     tran_id = random.randint(1000000000,9999999999)
     pid = request.args.get('pid')
     symptoms = request.args.get('symptoms')
-    print(symptoms)
-    created = datetime.now()
-    new_patient_log = PatientLog(tran_id=tran_id, pid=pid,date=created,symptoms=symptoms)
+    op_id = session.get('operator').op_id
+    date = datetime.now()
+    new_patient_log = PatientLog(tran_id=tran_id, op_id=op_id,pid=pid,date=date,symptoms=symptoms)
     db.session.add(new_patient_log)
     patient = CurrentPatients.query.filter_by(pid=pid).first()
     patient.contacted = "contacted"

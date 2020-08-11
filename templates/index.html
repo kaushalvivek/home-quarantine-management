@@ -146,7 +146,7 @@
                         <form>
                           {% for i in symptoms %}
                           <div class="form-check m-3">
-                            <input name="{{ i.name }}" type="checkbox" class="form-check-input symptom"
+                            <input name="{{ i.name }}" type="checkbox" class="form-check-input symptom_unreachable"
                               id="{{ i.symptom_id }}">
                             <label class="form-check-label" for="{{ i.symptom_id }}">{{ i.name }}</label>
                           </div>
@@ -156,7 +156,7 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-success m-2 btn-sm"
-                          onClick="contact({{ i.pid }})">Submit</button>
+                          onClick="contact_unreachable({{ i.pid }})">Submit</button>
                       </div>
                     </div>
                   </div>
@@ -188,6 +188,17 @@
   function contact(pid) {
     var symptoms = [];
     $('.symptom:checkbox:checked').each(function () {
+      symptoms.push(this.name);
+    })
+    url = "/contact?pid=" + pid
+      + "&symptoms=" + symptoms
+      ;
+    window.location = url;
+  }
+
+  function contact(pid) {
+    var symptoms = [];
+    $('.symptom_unreachable:checkbox:checked').each(function () {
       symptoms.push(this.name);
     })
     url = "/contact?pid=" + pid

@@ -1,0 +1,150 @@
+{% include "header.html" %}
+
+<div class="container">
+  <br />
+  <div class="card">
+    <div class="card-body mt-2">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="text-justify">
+            <h3>Hi, Admin!</h3>
+            <p id="date"></p>
+          </div>
+        </div>
+        <div class="col-md-8  ">
+          <div class="text-justify">
+            <h5 class="ml-2">Your Actions:</h5>
+            <button type="button" class="btn btn-success btn-sm m-2" onClick="createOp()">Create Operator</button>
+            <button type="button" class="btn btn-info btn-sm m-2" onClick="createOp()">View Operator Analysis</button>
+            <button type="button" class="btn btn-warning btn-sm m-2" onClick="createOp()">View Patient Analysis</button>
+            <button type="button" class="btn btn-dark btn-sm m-2" data-toggle="modal" data-target="#exampleModal">
+              Manage Symptoms
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Patient Symptoms</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="text-center">
+                      <form id='test' name='test'>
+                        <div class="row">
+                          <div class="col-md-8">
+                            <div class="form-group">
+                              <input type="text" class="form-control" id="name" placeholder="enter symptom name ...">
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <button type="button" class="btn btn-success" onclick="submitData()">Add New</button>
+                          </div>
+                        </div>
+                        <p id="error" style="color:red; display: none">Enter symptom name!</p>
+                    </div>
+                    <em>
+                      To delete a symptom, click on the 'x' next to it
+                    </em>
+                    <table>
+                      {% for i in symptoms %}
+                      <tr>
+                        <td class="p-2">{{ i.name }}</td>
+                        <td class="p-2"><span onclick="deleteSymptom({{ i.symptom_id }})">❌</span></td>
+                        {% endfor %}
+                    </table>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br />
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="panel-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Operator ID</th>
+              <th>Operator Name</th>
+              <th>Operator Email</th>
+              <th>Operator Password</th>
+              <th>Date Created</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in operator %}
+            <tr>
+              <td>{{ i.op_id }}</td>
+              <td>{{ i.name }}</td>
+              <td>{{ i.email }}</td>
+              <td>{{ i.password }}</td>
+              <td>{{ i.date_created }}</td>
+              <td>
+                <div onclick="deleteOp({{ i.op_id }})">❌</div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+  $('document').ready(function () {
+    let dateObj = new Date();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    let month = monthNames[dateObj.getMonth()];
+    let day = String(dateObj.getDate()).padStart(2, '0');
+    let year = dateObj.getFullYear();
+    let output = "Your dashboard for " + month + '\n' + day + ', ' + year;
+    $("#date").text(output);
+  });
+  function createOp() {
+    window.location = '/create_operator';
+  };
+
+  function manageSymptom() {
+    window.location = '/create_operator';
+  };
+
+  function deleteOp(op_id) {
+    window.location = '/delete_operator?op_id=' + op_id;
+  }
+
+  function deleteSymptom(symptom_id) {
+    window.location = '/delete_symptom?symptom_id=' + symptom_id;
+  }
+
+  // get symptom
+  function submitData() {
+    var name = $('#name').val();
+
+    // var today = new Date();
+    if (!name) {
+      $('#error').css('display', 'block');
+    }
+    else {
+      var url = 'get_symptom?name=' + name;
+      window.location = url
+    }
+  }
+</script>
+
+</HTML>

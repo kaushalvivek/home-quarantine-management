@@ -1,0 +1,73 @@
+{% include "header.html" %}
+<div class="container">
+  <br />
+  <div class="card">
+    <div class="card-body mt-2">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="text-justify">
+            <h3>Hi, {{ name }}</h3>
+            <p id="date"></p>
+
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-justify">
+            <p>
+              <span class="badge badge-info ml-5">To Contact : 0</span>
+              <span class="badge badge-success ml-5">Contacted : 0</span>
+              <span class="badge badge-danger ml-5">Unreachable : 0</span>
+            </p>
+            <div class="progress">
+              <div id="progress" class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-value now="0"
+                aria-valuemin="0" aria-valuemax="100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="text-center">
+      <p style="color:red">
+        No patients have been assigned to you, contact administrator. If your account was created today, you'll be
+        assigned patients starting tomorrow.
+      </p>
+    </div>
+  </div>
+</div>
+{% include "footer.html" %}
+</body>
+<script>
+  $('document').ready(function () {
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    let dateObj = new Date();
+    let month = monthNames[dateObj.getMonth()];
+    let day = String(dateObj.getDate()).padStart(2, '0');
+    let year = dateObj.getFullYear();
+    let output = "Your dashboard for " + month + '\n' + day + ', ' + year;
+    $("#date").text(output);
+  });
+
+  function contact(pid) {
+    var symptoms = [];
+    $('.symptom:checkbox:checked').each(function () {
+      symptoms.push(this.name);
+    })
+    url = "/contact?pid=" + pid
+      + "&symptoms=" + symptoms
+      ;
+    window.location = url;
+  }
+
+  function unreachable(pid, status) {
+    url = "/unreachable?pid=" + pid;
+    window.location = url;
+  }
+</script>
+
+</HTML>
