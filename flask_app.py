@@ -148,7 +148,7 @@ def logout():
 @app.route('/admin_verify')
 def admin_verify():
     # to be set by config later
-  session['admin_email'] = "vivek.kaushal@outlook.com"
+  session['admin_email'] = "admin@admin.com"
   session['admin_password'] = 'temp'
   password = request.args.get('password')
   email = request.args.get('email')

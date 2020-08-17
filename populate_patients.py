@@ -6,6 +6,7 @@ import dateparser
 # get currently active patients
 print("Reading google sheet ...")
 try:
+  # look up how to setup Google Spreadsheet API
   gc = gspread.service_account()
   sh = gc.open("Patna Home Quarantine")
   all_values = sh.sheet1.get_all_values()
